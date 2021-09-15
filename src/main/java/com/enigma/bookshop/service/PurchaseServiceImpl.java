@@ -40,7 +40,6 @@ public class PurchaseServiceImpl implements PurchaseService{
 
             // update stock buku
             book.setStock(book.getStock()- purchaseDetail.getQuantity());
-            bookService.updateBook(book);
 
             // get price sell from quantity * book price
             purchaseDetail.setPriceSell((double) (book.getPrice() * purchaseDetail.getQuantity()));
