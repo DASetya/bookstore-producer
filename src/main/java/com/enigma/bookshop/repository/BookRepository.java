@@ -4,7 +4,9 @@ import com.enigma.bookshop.entity.Book;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public interface BookRepository extends JpaRepository<Book, Integer> {
+import java.util.List;
 
+@Repository
+public interface BookRepository extends JpaRepository<Book, String> {
+    List<Book>findBookByTitleContaining(String title);
 }
