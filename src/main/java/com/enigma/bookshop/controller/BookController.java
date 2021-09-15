@@ -46,9 +46,9 @@ public class BookController {
 
     @GetMapping
     public PageResponseWrapper<Book> getBookPerPage(@RequestParam(name = "page", defaultValue = "0") Integer page,
-                                                    @RequestParam(name = "size", defaultValue = "3") Integer size,
+                                                    @RequestParam(name = "size", defaultValue = "5") Integer size,
                                                     @RequestParam(name = "sortBy", defaultValue = "title") String sortBy,
-                                                    @RequestParam(name = "direcction", defaultValue = "DESC") String direction){
+                                                    @RequestParam(name = "direcction", defaultValue = "ASC") String direction){
         Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
         Pageable pageable = PageRequest.of(page, size, sort);
         Page<Book> bookPage = bookService.getBookPerPage(pageable);
