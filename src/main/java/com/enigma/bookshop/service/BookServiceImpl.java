@@ -55,6 +55,11 @@ public class BookServiceImpl implements BookService{
         return bookRepository.findBookByTitleContaining(title);
     }
 
+    @Override
+    public List<Book> getBookByYear() {
+        return bookRepository.getBookByYear();
+    }
+
     private void verify(String id){
         if(!bookRepository.findById(id).isPresent()){
             String message = String.format(ResponseMessage.NOT_FOUND_MESSAGE, "books", id);

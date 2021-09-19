@@ -1,6 +1,7 @@
 package com.enigma.bookshop.service;
 
 import com.enigma.bookshop.entity.Book;
+import com.enigma.bookshop.entity.Member;
 import com.enigma.bookshop.entity.Purchase;
 import com.enigma.bookshop.entity.PurchaseDetail;
 import com.enigma.bookshop.exception.DataNotFoundException;
@@ -21,10 +22,16 @@ public class PurchaseServiceImpl implements PurchaseService{
     @Autowired
     BookService bookService;
 
+    @Autowired
+    MemberService memberService;
+
     @Override
     @Transactional
     public Purchase transaction(Purchase purchase) {
         Purchase purchase1 = purchaseRepository.save(purchase);
+        Member member = memberService.getmMemberById(purchase.getMember().getId());
+        purchase1.setMember(member);
+        Double grandTotal = 0.0;
         for (PurchaseDetail purchaseDetail: purchase.getPurchaseDetails()) {
             purchaseDetail.setPurchase(purchase1);
             Book book =bookService.getBookById(purchaseDetail.getBook().getId());
@@ -45,6 +52,8 @@ public class PurchaseServiceImpl implements PurchaseService{
             purchaseDetail.setPriceSell((double) (book.getPrice() * purchaseDetail.getQuantity()));
             purchaseDetail.setBook(book);
             purchaseDetailService.savePurchaseDetail(purchaseDetail);
+
+            purchase1.setGrandTotal(grandTotal+=purchaseDetail.getPriceSell());
         }
         return purchase1;
     }
