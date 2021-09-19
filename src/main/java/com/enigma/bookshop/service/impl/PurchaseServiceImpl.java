@@ -1,17 +1,25 @@
-package com.enigma.bookshop.service;
+package com.enigma.bookshop.service.impl;
 
+import com.enigma.bookshop.config.KafkaConfig;
 import com.enigma.bookshop.entity.Book;
 import com.enigma.bookshop.entity.Member;
 import com.enigma.bookshop.entity.Purchase;
 import com.enigma.bookshop.entity.PurchaseDetail;
 import com.enigma.bookshop.exception.DataNotFoundException;
 import com.enigma.bookshop.repository.PurchaseRepository;
+import com.enigma.bookshop.service.BookService;
+import com.enigma.bookshop.service.MemberService;
+import com.enigma.bookshop.service.PurchaseDetailService;
+import com.enigma.bookshop.service.PurchaseService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class PurchaseServiceImpl implements PurchaseService{
+public class PurchaseServiceImpl implements PurchaseService {
 
     @Autowired
     PurchaseRepository purchaseRepository;
@@ -25,9 +33,15 @@ public class PurchaseServiceImpl implements PurchaseService{
     @Autowired
     MemberService memberService;
 
+    @Autowired
+    private KafkaTemplate<String, String> kafkaTemplate;
+
+    @Autowired
+    ObjectMapper objectMapper;
+
     @Override
     @Transactional
-    public Purchase transaction(Purchase purchase) {
+    public void transaction(Purchase purchase) throws JsonProcessingException {
         Purchase purchase1 = purchaseRepository.save(purchase);
         Member member = memberService.getmMemberById(purchase.getMember().getId());
         purchase1.setMember(member);
@@ -53,8 +67,10 @@ public class PurchaseServiceImpl implements PurchaseService{
             purchaseDetail.setBook(book);
             purchaseDetailService.savePurchaseDetail(purchaseDetail);
 
+            // get GrandTotal from SUM(totalPrice)
             purchase1.setGrandTotal(grandTotal+=purchaseDetail.getPriceSell());
         }
-        return purchase1;
+        String response =objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(purchase1);
+        this.kafkaTemplate.send(KafkaConfig.TOPIC, response);
     }
 }

@@ -1,9 +1,10 @@
-package com.enigma.bookshop.service;
+package com.enigma.bookshop.service.impl;
 
 import com.enigma.bookshop.constant.ResponseMessage;
 import com.enigma.bookshop.entity.Member;
 import com.enigma.bookshop.exception.DataNotFoundException;
 import com.enigma.bookshop.repository.MemberRepository;
+import com.enigma.bookshop.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

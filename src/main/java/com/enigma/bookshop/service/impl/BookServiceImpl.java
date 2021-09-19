@@ -1,9 +1,10 @@
-package com.enigma.bookshop.service;
+package com.enigma.bookshop.service.impl;
 
 import com.enigma.bookshop.constant.ResponseMessage;
 import com.enigma.bookshop.entity.Book;
 import com.enigma.bookshop.exception.DataNotFoundException;
 import com.enigma.bookshop.repository.BookRepository;
+import com.enigma.bookshop.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,7 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class BookServiceImpl implements BookService{
+public class BookServiceImpl implements BookService {
 
     @Autowired
     BookRepository bookRepository;
